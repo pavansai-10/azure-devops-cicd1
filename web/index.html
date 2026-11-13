@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07152f">
+  <title>Azure DevOps | Deployment Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#07152f;--panel:#0d2042;--panel2:#10284f;--line:rgba(164,190,230,.15);--muted:#91a5c7;--text:#eef4ff;--blue:#58a6ff;--cyan:#48d6e8;--green:#40d69a;--amber:#ffca70}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0%,#15386b 0,transparent 32%),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}
+    button,a{font:inherit}.layout{display:grid;grid-template-columns:248px 1fr;min-height:100vh}.sidebar{border-right:1px solid var(--line);padding:28px 18px;background:rgba(5,17,39,.72)}
+    .brand{display:flex;align-items:center;gap:12px;padding:0 10px 34px;font-family:"Space Grotesk";font-size:17px;font-weight:700}.brand-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#49a7ff,#5b6dff);display:grid;place-items:center;font-size:19px;box-shadow:0 8px 24px #2877df55}
+    .nav-label{font-size:10px;letter-spacing:1.7px;color:#6881a9;font-weight:700;padding:12px 12px}.nav a{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;color:#a9bad6;text-decoration:none;margin:4px 0;font-size:13px}.nav a.active,.nav a:hover{background:#18365f;color:white}.nav .ico{width:20px;text-align:center;font-size:16px}
+    .sidebar-bottom{margin-top:50px;padding:16px 12px;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:11px;line-height:1.6}
+    main{padding:30px clamp(18px,4vw,52px) 48px;max-width:1500px;width:100%;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:30px}.eyebrow{color:var(--cyan);font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700}.topbar h1{font:700 clamp(25px,3vw,34px) "Space Grotesk";margin:7px 0}.sub{color:var(--muted);font-size:13px}.top-actions{display:flex;align-items:center;gap:10px}.pill{border:1px solid var(--line);background:#0d2042;color:#c6d5ed;padding:9px 13px;border-radius:999px;font-size:11px}.avatar{width:35px;height:35px;border-radius:50%;background:#214a7d;display:grid;place-items:center;font-weight:700}
+    .hero{position:relative;overflow:hidden;background:linear-gradient(115deg,#123b70,#145a82 58%,#173b72);border:1px solid #4d9bd455;border-radius:19px;padding:27px 30px;margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffffff16;border-radius:50%;right:8%;top:-150px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05}.hero h2{font:700 23px "Space Grotesk";margin:8px 0}.hero p{margin:0;color:#c1dcf3;font-size:13px;max-width:580px;line-height:1.6}.hero .hero-tag{color:#8ff0cf;font-size:11px;font-weight:700;letter-spacing:1.5px}.hero-graphic{font-size:65px;opacity:.9;z-index:1;padding:0 22px}
+    .section-head{display:flex;justify-content:space-between;align-items:center;margin:27px 0 13px}.section-head h3{font:600 16px "Space Grotesk";margin:0}.section-head span{color:var(--muted);font-size:11px}
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:linear-gradient(145deg,#10264a,#0b1d3b);border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.card-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px}.card-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#1a3c66;font-size:17px}.metric{font:700 25px "Space Grotesk";margin:15px 0 5px}.metric-note{color:var(--muted);font-size:11px}.status{display:inline-flex;align-items:center;gap:6px;color:#7be4b6;font-size:10px;font-weight:700}.dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 10px #40d69a99}
+    .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}.pipeline-card,.env-card{background:linear-gradient(145deg,#10264a,#0b1d3b);border:1px solid var(--line);border-radius:15px;padding:20px}.pipeline-flow{display:flex;align-items:center;gap:12px;margin:22px 0 16px}.stage{flex:1;border:1px solid var(--line);background:#102b50;border-radius:12px;padding:15px}.stage strong{display:block;font-size:13px;margin:9px 0 5px}.stage small{color:var(--muted);font-size:10px}.stage-icon{font-size:20px}.connector{height:1px;flex:0 0 24px;background:#41648f}.stage-state{font-size:10px;color:var(--green);font-weight:700}.env-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.env-row:last-child{border:0}.env-row span:first-child{color:var(--muted)}.env-row strong{font-weight:600;text-align:right}
+    .history{background:linear-gradient(145deg,#10264a,#0b1d3b);border:1px solid var(--line);border-radius:15px;overflow:hidden}.history-row{display:grid;grid-template-columns:1.1fr 1fr 1fr .7fr;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);font-size:11px;align-items:center}.history-row:last-child{border:0}.history-head{color:#8299bc;background:#0b1b36;font-size:10px;text-transform:uppercase;letter-spacing:1px}.tag{padding:5px 8px;border-radius:999px;background:#123f3a;color:#7be4b6;font-size:10px;width:max-content}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #3988d8;background:#1672c5;color:white;padding:10px 15px;border-radius:9px;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer}.btn.secondary{background:#122c50;border-color:var(--line);color:#c8d9f1}.btn:hover{filter:brightness(1.15)}footer{color:#7188ad;font-size:10px;text-align:center;padding:28px 0 0}
+    @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.layout{grid-template-columns:205px 1fr}}
+    @media(max-width:680px){.layout{display:block}.sidebar{display:none}main{padding:22px 15px}.topbar{align-items:flex-start}.top-actions .pill{display:none}.hero{padding:22px}.hero-graphic{display:none}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{padding:13px}.metric{font-size:21px}.pipeline-flow{gap:6px}.connector{flex-basis:10px}.stage{padding:10px 8px}.stage strong{font-size:11px}.history-row{grid-template-columns:1fr 1fr}.history-head{display:none}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">⚡</div><span>Cloud<span style="color:#62b8ff">Deploy</span></span></div>
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="nav">
+      <a class="active" href="#overview"><span class="ico">▦</span>Overview</a>
+      <a href="#pipeline"><span class="ico">⎇</span>CI/CD Pipeline</a>
+      <a href="#environment"><span class="ico">☁</span>Environments</a>
+      <a href="#history"><span class="ico">◷</span>Deployment History</a>
+    </nav>
+    <div class="nav-label" style="margin-top:22px">RESOURCES</div>
+    <nav class="nav">
+      <a href="https://dev.azure.com/" target="_blank" rel="noreferrer"><span class="ico">◈</span>Azure DevOps</a>
+      <a href="https://github.com/" target="_blank" rel="noreferrer"><span class="ico">⌘</span>GitHub</a>
+      <a href="https://portal.azure.com/" target="_blank" rel="noreferrer"><span class="ico">▣</span>Azure Portal</a>
+    </nav>
+    <div class="sidebar-bottom">TRAINING PROJECT<br><strong style="color:#dceaff">Azure App Service CI/CD</strong><br>Automated deployment to the development slot.</div>
+  </aside>
+  <main id="overview">
+    <header class="topbar">
+      <div><div class="eyebrow">CLOUD ENGINEERING / PROJECT</div><h1>Deployment Dashboard</h1><div class="sub">Monitor your application delivery workflow in one place.</div></div>
+      <div class="top-actions"><span class="pill">● DEVELOPMENT</span><div class="avatar">PS</div></div>
+    </header>
+    <section class="hero">
+      <div><div class="hero-tag">AZURE APP SERVICE · LINUX</div><h2>Your delivery pipeline, at a glance.</h2><p>A clean overview of your build, deployment target and release activity. This dashboard is served by your Node.js application on Azure App Service.</p></div>
+      <div class="hero-graphic">☁</div>
+    </section>
+    <div class="section-head"><h3>Platform overview</h3><span id="updated">Updated just now</span></div>
+    <section class="cards">
+      <article class="card"><div class="card-top"><span>CI BUILD</span><div class="card-icon">⚙</div></div><div class="metric">Ready</div><div class="status"><i class="dot"></i> Build stage configured</div></article>
+      <article class="card"><div class="card-top"><span>CD DEPLOYMENT</span><div class="card-icon">🚀</div></div><div class="metric">Dev</div><div class="status"><i class="dot"></i> Deployment target</div></article>
+      <article class="card"><div class="card-top"><span>RUNTIME</span><div class="card-icon">⌘</div></div><div class="metric">Node 24</div><div class="metric-note">Linux · Code publishing</div></article>
+      <article class="card"><div class="card-top"><span>BRANCH</span><div class="card-icon">⑂</div></div><div class="metric">main</div><div class="metric-note">Deployment source branch</div></article>
+    </section>
+    <div class="section-head" id="pipeline"><h3>Pipeline workflow</h3><span>Illustrative project status</span></div>
+    <section class="two-col">
+      <article class="pipeline-card">
+        <div class="card-top"><span>CONTINUOUS INTEGRATION / DELIVERY</span><span class="tag">CONFIGURED</span></div>
+        <div class="pipeline-flow">
+          <div class="stage"><div class="stage-icon">🧰</div><strong>CI · Build</strong><small>Install, validate and package</small><div class="stage-state">● Build workflow</div></div>
+          <div class="connector"></div>
+          <div class="stage"><div class="stage-icon">☁️</div><strong>CD · Deploy</strong><small>Publish ZIP to Dev slot</small><div class="stage-state">● Release workflow</div></div>
+        </div>
+        <div class="actions"><a class="btn" href="https://dev.azure.com/" target="_blank" rel="noreferrer">Open Azure Pipelines ↗</a><a class="btn secondary" href="https://github.com/" target="_blank" rel="noreferrer">Open GitHub ↗</a></div>
+      </article>
+      <article class="env-card" id="environment">
+        <div class="card-top"><span>DEVELOPMENT ENVIRONMENT</span><span class="tag">TARGET</span></div>
+        <div class="env-row"><span>App Service</span><strong>webapp-devops-student</strong></div>
+        <div class="env-row"><span>Deployment slot</span><strong>dev</strong></div>
+        <div class="env-row"><span>Operating system</span><strong>Linux</strong></div>
+        <div class="env-row"><span>Runtime</span><strong>Node.js 24 LTS</strong></div>
+        <div class="env-row"><span>Health endpoint</span><strong>/health</strong></div>
+      </article>
+    </section>
+    <div class="section-head" id="history"><h3>Release activity</h3><span>Sample display · connect live pipeline data separately</span></div>
+    <section class="history">
+      <div class="history-row history-head"><span>Workflow</span><span>Source</span><span>Target</span><span>Status</span></div>
+      <div class="history-row"><strong>CI / CD pipeline</strong><span>main</span><span>Development slot</span><span class="tag">Configured</span></div>
+      <div class="history-row"><strong>Application package</strong><span>ZIP artifact</span><span>Azure App Service</span><span class="tag">Ready</span></div>
+      <div class="history-row"><strong>Runtime check</strong><span>Node.js 24</span><span>Linux</span><span class="tag">Enabled</span></div>
+    </section>
+    <footer>Azure DevOps CI/CD Training Project · Built with HTML, CSS, JavaScript and Node.js · <span id="clock"></span></footer>
+  </main>
+</div>
+<script>
+  const clock = document.getElementById('clock');
+  const updated = document.getElementById('updated');
+  function tick(){ const now = new Date(); clock.textContent = now.toLocaleString(); }
+  tick(); setInterval(tick, 1000);
+  document.querySelectorAll('.nav a[href^="#"]').forEach(link => link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+  }));
+  updated.textContent = 'Updated ' + new Date().toLocaleTimeString();
+</script>
+</body>
+</html>

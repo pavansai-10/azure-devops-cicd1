@@ -1,0 +1,85 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  azureServiceConnection: 'sc-azure-student-dev'
+  resourceGroupName: 'rg-dev-webapp'
+  webAppName: 'webapp-devops-student'
+  slotName: 'dev'
+
+stages:
+- stage: CI
+  displayName: 'CI - Build Application'
+  jobs:
+  - job: Build
+    steps:
+    - checkout: self
+
+    - task: NodeTool@0
+      displayName: 'Use Node.js 24'
+      inputs:
+        versionSpec: '24.x'
+
+    - script: |
+        npm install
+        node --check server.js
+      displayName: 'Install dependencies and validate server'
+
+    - script: |
+        mkdir -p "$(Build.ArtifactStagingDirectory)/app"
+        cp server.js package.json "$(Build.ArtifactStagingDirectory)/app/"
+        cp -R web "$(Build.ArtifactStagingDirectory)/app/web"
+        test -f "$(Build.ArtifactStagingDirectory)/app/web/index.html"
+      displayName: 'Stage application files'
+
+    - task: ArchiveFiles@2
+      displayName: 'Create deployment ZIP'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/app'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+        replaceExistingArchive: true
+
+    - script: |
+        unzip -l "$(Build.ArtifactStagingDirectory)/app.zip"
+        unzip -Z1 "$(Build.ArtifactStagingDirectory)/app.zip" | grep -qx 'index.html' && exit 1 || true
+        unzip -Z1 "$(Build.ArtifactStagingDirectory)/app.zip" | grep -qx 'web/index.html'
+      displayName: 'Verify deployment ZIP structure'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish drop artifact'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/app.zip'
+        artifact: drop
+
+- stage: CD
+  displayName: 'CD - Deploy to Development'
+  dependsOn: CI
+  condition: succeeded()
+  jobs:
+  - deployment: DeployToDev
+    displayName: 'Deploy to Azure Linux Dev Slot'
+    environment: development
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Azure App Service Dev Slot'
+            inputs:
+              azureSubscription: '$(azureServiceConnection)'
+              appType: 'webAppLinux'
+              appName: '$(webAppName)'
+              deployToSlotOrASE: true
+              resourceGroupName: '$(resourceGroupName)'
+              slotName: '$(slotName)'
+              package: '$(Pipeline.Workspace)/drop/app.zip'
